@@ -29,22 +29,22 @@ app.use(session({
 }));
 
 app.use(auth.oidc.router);
-// // Tack a user object onto each request if possible
-// function addUser(req, res, next) { // ToDo: move out to middleware.js
-//   console.log('addUser');
-//   const { userContext } = req;
-//   if (!!userContext) {
-//     auth.oktaClient.getUser(userContext.userinfo.sub)
-//     .then(user => {
-//       res.locals.user = user;
-//       next();
-//     }).catch(err => {
-//       next(err);
-//     });
-//   }
-//   next();
-// };
-// app.use(addUser);
+// Tack a user object onto each request if possible
+function addUser(req, res, next) { // ToDo: move out to middleware.js
+  const { userContext } = req;
+  if (!userContext) {
+    return next();
+  }
+ 
+  auth.oktaClient.getUser(userContext.userinfo.sub)
+  .then(user => {
+    res.locals.user = user;
+    next();
+  }).catch(err => {
+    next(err);
+  });
+};
+app.use(addUser);
 
 // Routes
 app.use('/', indexRouter);
