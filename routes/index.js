@@ -3,11 +3,11 @@ const auth = require('../auth');
 const router = express.Router();
 
 // Home page
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   const { userContext } = req;
   if (!!userContext) {
-    // ToDo: This is a hack, it isn't async and it should be reusable
-    res.locals.user = auth.oktaClient.getUser(userContext.userinfo.sub);
+     // ToDo: This should be reusable, try putting back in app.js
+    res.locals.user  = await auth.oktaClient.getUser(userContext.userinfo.sub);
   }
   res.render('index');
 });
